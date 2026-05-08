@@ -1,65 +1,353 @@
-import Image from "next/image";
+"use client"
+import { useMemo, useState } from 'react'
 
-export default function Home() {
+export default function CabWebsite() {
+  const [pickup, setPickup] = useState('')
+  const [drop, setDrop] = useState('')
+  const [searchResult, setSearchResult] = useState<any>(null)
+  const routes = [
+    {
+      from: 'Patna',
+      to: 'Sheohar',
+      price: '₹3500',
+      time: '5-6 Hours'
+    },
+    {
+      from: 'Patna Airport',
+      to: 'Sheohar',
+      price: '₹3800',
+      time: '5-6 Hours'
+    },
+    {
+      from: 'Sheohar',
+      to: 'Patna',
+      price: '₹3500',
+      time: '5-6 Hours'
+    }
+  ]
+
+  const cars = [
+    {
+      name: 'Swift Dzire',
+      type: 'Sedan',
+      seats: '4 Seats'
+    },
+    {
+      name: 'Ertiga',
+      type: 'SUV',
+      seats: '6 Seats'
+    },
+    {
+      name: 'Innova',
+      type: 'Premium',
+      seats: '7 Seats'
+    }
+  ]
+
+  const filteredRoutes = useMemo(() => {
+    return routes.filter(route => {
+      const pickupMatch = pickup
+        ? route.from.toLowerCase().includes(pickup.toLowerCase())
+        : true
+
+      const dropMatch = drop
+        ? route.to.toLowerCase().includes(drop.toLowerCase())
+        : true
+
+      return pickupMatch && dropMatch
+    })
+  }, [pickup, drop])
+
+  const handleSearch = () => {
+    if (filteredRoutes.length > 0) {
+      setSearchResult(filteredRoutes[0])
+    } else {
+      setSearchResult('not-found')
+    }
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      {/* Hero Section */}
+      <section className="bg-black text-white py-20 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h1 className="text-5xl font-bold leading-tight mb-6">
+              Patna To Sheohar Cab Service
+            </h1>
+
+            <p className="text-lg text-gray-300 mb-8">
+              24x7 taxi booking service for Patna, Sheohar and nearby cities.
+              Safe drivers, affordable pricing and instant booking.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="tel:+919556045388"
+                className="bg-yellow-400 text-black px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition"
+              >
+                Call Now
+              </a>
+
+              <a
+                href="https://wa.me/919556045388"
+                target="_blank"
+                className="border border-white px-6 py-3 rounded-2xl hover:bg-white hover:text-black transition"
+              >
+                WhatsApp Booking
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-white text-black rounded-3xl p-8 shadow-2xl">
+            <h2 className="text-2xl font-bold mb-6">
+              Quick Booking
+            </h2>
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Pickup Location"
+                value={pickup}
+                onChange={(e) => setPickup(e.target.value)}
+                className="w-full border p-3 rounded-xl"
+              />
+
+              <input
+                type="text"
+                placeholder="Drop Location"
+                value={drop}
+                onChange={(e) => setDrop(e.target.value)}
+                className="w-full border p-3 rounded-xl"
+              />
+
+              <input
+                type="date"
+                className="w-full border p-3 rounded-xl"
+              />
+
+              <button
+                onClick={handleSearch}
+                className="w-full bg-black text-white py-3 rounded-xl font-semibold hover:opacity-90"
+              >
+                Search Cab
+              </button>
+
+              {searchResult && typeof searchResult === 'object' && (
+                <div className="bg-green-100 border border-green-300 p-4 rounded-xl mt-4">
+                  <h3 className="font-bold text-lg mb-2">
+                    Cab Found
+                  </h3>
+
+                  <p>
+                    Route: {searchResult.from} → {searchResult.to}
+                  </p>
+
+                  <p>
+                    Fare: {searchResult.price}
+                  </p>
+
+                  <p>
+                    Time: {searchResult.time}
+                  </p>
+
+                  <a
+                    href="tel:+919556045388"
+                    className="inline-block mt-3 bg-black text-white px-4 py-2 rounded-lg"
+                  >
+                    Call Now
+                  </a>
+                </div>
+              )}
+
+              {searchResult === 'not-found' && (
+                <div className="bg-red-100 border border-red-300 p-4 rounded-xl mt-4">
+                  No cab available for this route right now.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Routes */}
+      <section className="py-16 px-6 max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4">
+            Popular Routes
+          </h2>
+
+          <p className="text-gray-600">
+            Fast and affordable outstation taxi services.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {routes.map((route, index) => (
+            <div
+              key={index}
+              className="bg-white p-6 rounded-3xl shadow-lg hover:shadow-2xl transition"
+            >
+              <h3 className="text-2xl font-bold mb-2">
+                {route.from} → {route.to}
+              </h3>
+
+              <p className="text-gray-600 mb-3">
+                Starting Fare: {route.price}
+              </p>
+
+              <p className="text-gray-600 mb-6">
+                Travel Time: {route.time}
+              </p>
+
+              <a
+                href="tel:+919556045388"
+                className="inline-block bg-black text-white px-5 py-2 rounded-xl"
+              >
+                Call For Booking
+              </a>
+            </div>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Car Section */}
+      <section className="bg-white py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Available Cars
+            </h2>
+
+            <p className="text-gray-600">
+              Choose the perfect cab for your journey.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {cars.map((car, index) => (
+              <div
+                key={index}
+                className="border rounded-3xl p-6 hover:shadow-xl transition"
+              >
+                <img
+                  src={
+                    car.name === 'Swift Dzire'
+                      ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSG7PhqJjh7pqzAUjVGIkrNkKW5bXIEY8SOcw&s'
+                      : car.name === 'Ertiga'
+                      ? 'https://www.team-bhp.com/sites/default/files/styles/check_extra_large_for_review/public/IMG20220901WA0009.jpg'
+                      : 'https://www.team-bhp.com/sites/default/files/styles/check_extra_large_for_review/public/Toyota%20Innova%20Hycross%20Ownership%20review.png'
+                  }
+                  alt={car.name}
+                  className="h-40 w-full object-cover rounded-2xl mb-5"
+                />
+
+                <h3 className="text-2xl font-bold mb-2">
+                  {car.name}
+                </h3>
+
+                <p className="text-gray-600 mb-1">
+                  Type: {car.type}
+                </p>
+
+                <p className="text-gray-600 mb-5">
+                  Capacity: {car.seats}
+                </p>
+
+                <a
+                  href="https://wa.me/919556045388"
+                  target="_blank"
+                  className="inline-block bg-black text-white px-5 py-2 rounded-xl"
+                >
+                  Book Now
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-16 px-6 bg-gray-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              Why Choose Us
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              '24x7 Service',
+              'Professional Drivers',
+              'Affordable Pricing',
+              'Safe Journey'
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="bg-white p-6 rounded-3xl text-center shadow"
+              >
+                <div className="text-2xl font-bold mb-3">✓</div>
+                <p className="font-medium">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Content */}
+      <section className="py-16 px-6 max-w-5xl mx-auto">
+        <h2 className="text-4xl font-bold mb-6">
+          Patna To Sheohar Taxi Booking
+        </h2>
+
+        <p className="text-gray-700 leading-8 mb-4">
+          Looking for a reliable Patna to Sheohar cab service? We provide one-way and round-trip taxi services at affordable prices. Our drivers are experienced and available 24x7 for airport pickup, railway station pickup and outstation travel.
+        </p>
+
+        <p className="text-gray-700 leading-8">
+          Book your Patna to Sheohar taxi instantly by calling us or sending a WhatsApp message. We offer Swift Dzire, Ertiga and Innova cab services for family trips, business travel and emergency travel.
+        </p>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-black text-white py-10 px-6">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-2xl font-bold mb-4">
+              Bihar Cab Service
+            </h3>
+
+            <p className="text-gray-300">
+              Trusted cab booking service for Bihar routes.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">
+              Contact
+            </h3>
+
+            <p className="text-gray-300 mb-2">
+              Phone: +91 9556045388
+            </p>
+
+            <p className="text-gray-300">
+              Available 24x7
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">
+              Service Areas
+            </h3>
+
+            <p className="text-gray-300">
+              Patna, Sheohar, Muzaffarpur, Sitamarhi, Darbhanga
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
